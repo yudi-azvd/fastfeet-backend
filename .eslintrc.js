@@ -2,6 +2,7 @@ module.exports = {
   env: {
     es6: true,
     node: true,
+    jest: true,
   },
   extends: [
     'airbnb-base', 'prettier',
@@ -21,5 +22,6 @@ module.exports = {
     'no-param-reassign': 'off',
     'camelcase': 'off',
     'no-unused-vars': ['error', { 'argsIgnorePattern': 'next' }],
+    'new-cap': ['error', {'newIsCapExceptions': ['multer']}]
   },
 };
