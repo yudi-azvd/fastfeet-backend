@@ -9,7 +9,7 @@ class FileController {
       path,
     });
 
-    return response.json({ ...file, url: file.url });
+    return response.json(file);
   }
 }
 
