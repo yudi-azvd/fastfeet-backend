@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import './bootstrap';
+// import 'dotenv/config';
 
 import express from 'express';
 import routes from './routes';
