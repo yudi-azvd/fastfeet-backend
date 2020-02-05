@@ -8,7 +8,7 @@ import factory from '../factories';
 
 describe('User', () => {
   beforeEach(async () => {
-    console.log('TRUNCATE');
+    // console.log('TRUNCATE');
     await truncate();
   });
 

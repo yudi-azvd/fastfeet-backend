@@ -7,39 +7,39 @@ import factory from '../factories';
 
 const api = supertest(app);
 
-describe.only('User2', () => {
-  beforeEach(async () => {
-    await truncate();
-  });
+// describe('User2', () => {
+//   beforeEach(async () => {
+//     await truncate();
+//   });
 
-  it('when auth', async () => {
-    const user = await factory.attrs('User');
+//   it('when auth', async () => {
+//     const user = await factory.attrs('User');
 
-    await factory.create('User', user);
+//     await factory.create('User', user);
 
-    const authResponse = await api.post('/sessions').send(user);
+//     const authResponse = await api.post('/sessions').send(user);
 
-    // console.log(authResponse);
+//     // console.log(authResponse);
 
-    expect(authResponse.body).toHaveProperty('token');
+//     expect(authResponse.body).toHaveProperty('token');
 
-    const { token } = authResponse.body;
+//     const { token } = authResponse.body;
 
-    await api
-      .set('Authorization', `Bearer ${token}`)
-      .put('/users')
-      .send({
-        ...user,
-        oldPassword: user.password,
-        password: '123456',
-        confirmPassword: '123456',
-      })
-      .expect(updateResponse.body)
-      .toHaveProperty('name');
+//     await api
+//       .set('Authorization', `Bearer ${token}`)
+//       .put('/users')
+//       .send({
+//         ...user,
+//         oldPassword: user.password,
+//         password: '123456',
+//         confirmPassword: '123456',
+//       })
+//       .expect(updateResponse.body)
+//       .toHaveProperty('name');
 
-    // console.log(user);
-  });
-});
+//     // console.log(user);
+//   });
+// });
 
 /**
  * Pra setar o token no cabeçalho da requisição:
