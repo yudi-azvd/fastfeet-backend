@@ -10,7 +10,7 @@ import factory from '../factories';
  * https://blog.stvmlbrn.com/2018/06/18/test-jwt-authenticated-express-routes-with-jest-and-supertest.html
  */
 
-describe.skip('Session', () => {
+describe('Session', () => {
   beforeEach(async () => {
     await truncate();
   });
