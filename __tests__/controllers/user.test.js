@@ -6,6 +6,8 @@ import truncate from '../util/truncate';
 
 import factory from '../factories';
 
+let token;
+
 describe('User', () => {
   beforeEach(async () => {
     // console.log('TRUNCATE');
@@ -23,7 +25,6 @@ describe('User', () => {
   });
 
   it('should send a password with length greater than 6', async () => {
-    // attrs funcionou ao invés de create. Não sei o motivo.
     const user = await factory.attrs('User', {
       password: '12345',
     });
@@ -72,61 +73,116 @@ describe('User', () => {
     expect(authResponse.status).toBe(401);
   });
 
-  // it('when auth', async () => {
-  //   const user = await factory.attrs('User');
+  /**
+   * UPDATE method
+   */
+  describe('when authenticated', () => {
+    it('must provide password, old password and confirm password', async () => {
+      const user = await factory.create('User');
 
-  //   await factory.create('User', user);
+      const authResponse = await request(app)
+        .post('/sessions')
+        .send({
+          email: user.email,
+          password: user.password,
+        });
 
-  //   const authResponse = await request(app)
-  //     .post('/sessions')
-  //     .send(user);
+      expect(authResponse.body).toHaveProperty('token');
 
-  //   // console.log(authResponse);
+      token = authResponse.body.token;
 
-  //   expect(authResponse.body).toHaveProperty('token');
+      const updateResponse = await request(app)
+        .put('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: user.name,
+          email: user.email,
+          oldPassword: user.password,
+          password: '123456',
+          confirmPassword: '123456',
+        });
 
-  //   const { token } = authResponse.body;
+      expect(updateResponse.body).toHaveProperty('name');
+    });
 
-  //   request(app)
-  //     .set('Authorization', `Bearer ${token}`)
-  //     .put('/users')
-  //     .send({
-  //       ...user,
-  //       oldPassword: user.password,
-  //       password: '123456',
-  //       confirmPassword: '123456',
-  //     })
-  //     .expect(updateResponse.body)
-  //     .toHaveProperty('name');
+    it('must confirm password when change password', async () => {
+      const user = await factory.create('User');
 
-  //   // console.log(user);
-  // });
+      const authResponse = await request(app)
+        .post('/sessions')
+        .send({
+          email: user.email,
+          password: user.password,
+        });
+
+      expect(authResponse.body).toHaveProperty('token');
+
+      token = authResponse.body.token;
+
+      const updateResponse = await request(app)
+        .put('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: user.name,
+          email: user.email,
+          oldPassword: user.password,
+          password: '123456',
+        });
+
+      expect(updateResponse.status).toBe(400);
+    });
+
+    // it('must change email to a email which is not already taken', async () => {
+    //   const firstUser = await factory.create('User');
+    //   const user = await factory.create('User');
+
+    //   const authResponse = await request(app)
+    //     .post('/sessions')
+    //     .send({
+    //       email: user.email,
+    //       password: user.password,
+    //     });
+
+    //   expect(authResponse.body).toHaveProperty('token');
+
+    //   token = authResponse.body.token;
+
+    //   const updateResponse = await request(app)
+    //     .put('/users')
+    //     .set('Authorization', `Bearer ${token}`)
+    //     .send({
+    //       name: user.name,
+    //       email: firstUser.email,
+    //     });
+
+    //   expect(updateResponse.status).toBe(400);
+    //   // expect(updateResponse.body).toBe(400);
+    // });
+
+    it('change name with no need to inform password stuff', async () => {
+      const user = await factory.create('User');
+
+      const authResponse = await request(app)
+        .post('/sessions')
+        .send({
+          email: user.email,
+          password: user.password,
+        });
+
+      expect(authResponse.body).toHaveProperty('token');
+
+      token = authResponse.body.token;
+
+      const updateResponse = await request(app)
+        .put('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          // ...user,
+          name: `${user.name}Different Name`,
+          email: user.email,
+        });
+
+      expect(updateResponse.body).toHaveProperty('name');
+    });
+  });
 });
-
-/**
- * Pra setar o token no cabeçalho da requisição:
- * api.defaults.headers.Authorization = `Bearer ${token}`;
- */
-// describe('User when authenticated', async () => {
-//   beforeEach(async () => {
-//     console.log('TRUNCATE');
-//     await truncate();
-//   });
-
-// let token = null
-// beforeAll(async () => {
-//   token = response.data.token
-// })
-
-//   const user = await factory.attrs('User');
-
-//   await factory.create('User', user);
-
-//   const authResponse = await request(app)
-//     .post('/sessions')
-//     .send(user);
-
-//   expect(authResponse.data).toHaveProperty('token');
-
-//   console.log(authResponse.token);
-// });
