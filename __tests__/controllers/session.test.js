@@ -75,4 +75,29 @@ describe('Session', () => {
 
     expect(response.body.error).toBe('User not found');
   });
+
+  it('is not accessible for users with no token', async () => {
+    const user = await factory.create('User');
+
+    const response = await request(app)
+      .put('/users')
+      .send({
+        name: `${user.name}change in name`,
+      });
+
+    expect(response.body.error).toBe('Token not provided');
+  });
+
+  it('is not accessible for users with invalid token', async () => {
+    const user = await factory.create('User');
+
+    const response = await request(app)
+      .put('/users')
+      .set('Authorization', 'Bearer something')
+      .send({
+        name: `${user.name}change in name`,
+      });
+
+    expect(response.body.error).toBe('Invalid token');
+  });
 });

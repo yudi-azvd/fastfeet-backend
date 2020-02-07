@@ -172,7 +172,6 @@ describe('User', () => {
         .put('/users')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          // ...user,
           name: `${user.name}Different Name`,
           email: user.email,
         });
@@ -198,7 +197,6 @@ describe('User', () => {
         .put('/users')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          // ...user,
           oldPassword: `${user.password}change in old password`,
           password: 'new password',
           confirmPassword: 'new password',

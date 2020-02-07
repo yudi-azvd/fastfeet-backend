@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 import * as Yup from 'yup';
 
 import User from '../models/User';
@@ -59,8 +60,13 @@ class UserController {
         where: { email: request.body.email },
       });
 
+      /**
+       * REVER ESSA PARTE
+       */
       if (existingUser) {
         return response.status(400).json({ error: 'This email is being used' });
+      } else {
+        console.log('else');
       }
     }
 
