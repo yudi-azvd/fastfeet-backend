@@ -17,5 +17,7 @@ module.exports = {
     );
   },
 
-  down: () => {},
+  down: QueryInterface => {
+    return QueryInterface.bulkDelete('users', { email: 'admin@fastfeet.com' });
+  },
 };
