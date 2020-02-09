@@ -9,7 +9,6 @@ import factory from '../factories';
  * Test JWT-Authenticated Express Routes with Jest And SuperTest
  * https://blog.stvmlbrn.com/2018/06/18/test-jwt-authenticated-express-routes-with-jest-and-supertest.html
  */
-
 describe('Session', () => {
   beforeEach(async () => {
     await truncate();

@@ -13,7 +13,7 @@ describe('User', () => {
     await truncate();
   });
 
-  it('should be able to regiter', async () => {
+  it('should be able to register', async () => {
     const user = await factory.attrs('User');
 
     const response = await request(app)
