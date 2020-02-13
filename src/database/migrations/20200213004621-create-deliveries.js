@@ -9,6 +9,7 @@ module.exports = {
       },
       product: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       start_date: {
         type: Sequelize.DATE,
