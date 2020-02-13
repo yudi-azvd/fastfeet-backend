@@ -20,6 +20,8 @@ router.post('/sessions', SessionController.store);
 
 router.use(authMiddleware);
 
+router.get('/users', UserController.index);
+
 router.put('/users', UserController.update);
 
 router.post('/deliverymen', DeliverymanController.store);
@@ -31,6 +33,8 @@ router.put('/deliverymen/:id', DeliverymanController.update);
 router.delete('/deliverymen/:id', DeliverymanController.delete);
 
 router.post('/deliveries', DeliveryController.store);
+
+router.get('/deliveries', DeliveryController.index);
 
 router.post('/files', upload.single('file'), FileController.store);
 

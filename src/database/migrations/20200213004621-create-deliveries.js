@@ -14,9 +14,9 @@ module.exports = {
         onDelete: 'SET NULL',
         allowNull: true, // mudar dps
       },
-      deliverman_id: {
+      deliveryman_id: {
         type: Sequelize.INTEGER,
-        references: { model: 'deliverymen', key: 'id' },
+        references: { model: 'deliverymans', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
         allowNull: true, // mudar dps

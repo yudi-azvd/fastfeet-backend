@@ -32,6 +32,12 @@ class UserController {
     return response.json({ id, name, email });
   }
 
+  async index(request, response) {
+    const users = await User.findAll();
+
+    return response.json(users);
+  }
+
   async update(request, response) {
     const schema = Yup.object().shape({
       name: Yup.string(),
@@ -66,7 +72,7 @@ class UserController {
       if (existingUser) {
         return response.status(400).json({ error: 'This email is being used' });
       } else {
-        console.log('else');
+        // console.log('else');
       }
     }
 
