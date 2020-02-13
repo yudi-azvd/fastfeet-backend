@@ -16,7 +16,7 @@ module.exports = {
         allowNull: true,
         unique: true,
       },
-      rua: {
+      street: {
         type: Sequelize.STRING,
         allowNull: false,
       },

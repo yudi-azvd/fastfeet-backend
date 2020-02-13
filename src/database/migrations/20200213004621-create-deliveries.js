@@ -7,6 +7,27 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
+      recipient_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'recipients', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+        allowNull: true, // mudar dps
+      },
+      deliverman_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'deliverymen', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+        allowNull: true, // mudar dps
+      },
+      signature_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'files', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+        allowNull: true, // mudar dps
+      },
       product: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -15,7 +36,7 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      end_at: {
+      end_date: {
         type: Sequelize.DATE,
         allowNull: true,
       },
