@@ -1,3 +1,6 @@
+/* eslint-disable yoda */
+import { isAfter, isBefore, parseISO, getHours } from 'date-fns';
+
 import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
@@ -5,9 +8,6 @@ import File from '../models/File';
 
 class DeliveryController {
   async store(request, response) {
-    // deve ser associada o recipient e ao deliveryman
-    // essas duas chaves deveriam ser obrigatórias?
-
     const existingDeliveryman = await Deliveryman.findByPk(
       request.body.deliveryman_id
     );
@@ -36,6 +36,8 @@ class DeliveryController {
         },
       ],
     });
+
+    // mandar email pro deliveryman
 
     return response.json(delivery);
   }
@@ -68,7 +70,29 @@ class DeliveryController {
     const delivery = await Delivery.findByPk(id);
 
     if (startDate) {
-      // do something
+      if (isBefore(parseISO(startDate), delivery.createdAt)) {
+        return response
+          .status(400)
+          .json({ error: 'Start date before delivery creation date' });
+      }
+
+      const hour = getHours(parseISO(startDate));
+
+      console.log(getHours(parseISO(startDate)));
+
+      if (!(8 <= hour && hour <= 18)) {
+        return response
+          .status(400)
+          .json({ error: 'Retirada deve ser feita entre 8h e 18h' });
+      }
+    }
+
+    if (endDate && startDate) {
+      if (isAfter(parseISO(startDate), parseISO(endDate))) {
+        return response
+          .status(400)
+          .json({ error: 'Start date must be before end date' });
+      }
     }
 
     return response.json(delivery);
