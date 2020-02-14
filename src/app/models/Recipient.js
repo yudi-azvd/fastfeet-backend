@@ -5,10 +5,12 @@ class Recipient extends Model {
     super.init(
       {
         name: Sequelize.STRING,
-        email: Sequelize.STRING,
-        startDate: Sequelize.DATE,
-        endDate: Sequelize.DATE,
-        canceledAt: Sequelize.DATE,
+        street: Sequelize.STRING,
+        number: Sequelize.INTEGER,
+        complement: Sequelize.STRING,
+        state: Sequelize.STRING,
+        city: Sequelize.STRING,
+        cep: Sequelize.STRING,
       },
       {
         sequelize,

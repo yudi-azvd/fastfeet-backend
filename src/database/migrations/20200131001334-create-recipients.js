@@ -11,11 +11,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        unique: true,
-      },
       street: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -23,6 +18,10 @@ module.exports = {
       number: {
         type: Sequelize.INTEGER,
         allowNull: false,
+      },
+      complement: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       state: {
         type: Sequelize.STRING,

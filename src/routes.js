@@ -36,6 +36,8 @@ router.post('/deliveries', DeliveryController.store);
 
 router.get('/deliveries', DeliveryController.index);
 
+router.put('/deliveries/:id', DeliveryController.update);
+
 router.post('/files', upload.single('file'), FileController.store);
 
 export default router;
