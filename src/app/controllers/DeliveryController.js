@@ -1,6 +1,8 @@
 /* eslint-disable yoda */
 import { isAfter, isBefore, parseISO, getHours } from 'date-fns';
 
+import Mail from '../../lib/Mail';
+
 import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
@@ -25,6 +27,7 @@ class DeliveryController {
     }
 
     const delivery = await Delivery.create(request.body, {
+      // NÃO INCLUI
       include: [
         {
           model: Deliveryman,
@@ -37,7 +40,16 @@ class DeliveryController {
       ],
     });
 
-    // mandar email pro deliveryman
+    await Mail.sendMail({
+      // to: `${delivery.deliveryman.name}`,
+      to: `${existingDeliveryman.name} <${existingDeliveryman.email}>`,
+      subject: 'Nova entrega',
+      // text: 'você tem uma nova entrega',
+      template: 'new_delivery',
+      context: {
+        deliveryman: existingDeliveryman.name,
+      },
+    });
 
     return response.json(delivery);
   }
