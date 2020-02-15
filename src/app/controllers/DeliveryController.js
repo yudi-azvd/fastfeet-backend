@@ -101,14 +101,21 @@ class DeliveryController {
      * Além disso, endDate não deveria ser informado
      * na mesma requisição que startDate, mas não tô
      * considerando isso por agora.
+     *
+     * Na vdd, agora to considerando que o frontend só
+     * vai apertar um botão para enviar solicitar a retirada
+     * e outr botão para confirmar entrega finalizada, e não
+     * um formulário.
+     *
+     * Mas e se a entrega já estiver cancelada? O que fazer?
+     * - passar reto?
+     * - passar um erro?
      */
     const schema = Yup.object().shape({
       product: Yup.string(),
       endDate: Yup.date(),
       startDate: Yup.date(),
-      // .when('endDate', (endDate, field) =>
-      //   endDate ? field.required() : field
-      // ),
+      // Eu teria que não deixar que canceledAt fosse enviado
     });
 
     if (!(await schema.isValid(request.body))) {
@@ -119,6 +126,8 @@ class DeliveryController {
     const { startDate, endDate } = request.body;
 
     const delivery = await Delivery.findByPk(id);
+
+    // if (delivery.canceledAt) ???
 
     if (!delivery) {
       return response.status(400).json({ error: 'Delivery not found' });
@@ -150,9 +159,12 @@ class DeliveryController {
           .json({ error: 'Start date must be before end date' });
       }
 
-      console.log('setando endDate');
       delivery.endDate = endDate;
       await delivery.save();
+    } else {
+      return response.status(400).json({
+        error: 'End date only makes sense when start date has been defined',
+      });
     }
 
     return response.json(delivery);
