@@ -12,7 +12,14 @@ class CancelledDeliveryMail {
   async handle({ data }) {
     const { delivery } = data;
 
-    console.log(`${delivery.deliveryman.name} <${delivery.deliveryman.email}>`);
+    console.log(`<${delivery.canceledAt}>`);
+    console.log(`<${parseISO(delivery.canceledAt)}>`);
+
+    console.log(
+      format(parseISO(delivery.canceledAt), "dd 'de' MMMM', às' H'h'mm''", {
+        locale: pt,
+      })
+    );
 
     await Mail.sendMail({
       to: `${delivery.deliveryman.name} <${delivery.deliveryman.email}>`,
@@ -21,7 +28,7 @@ class CancelledDeliveryMail {
       context: {
         date: format(
           parseISO(delivery.canceledAt),
-          "dd 'de' MMMM', às' H:mm'h'",
+          "dd 'de' MMMM', às' H'h'mm",
           { locale: pt }
         ),
         deliveryId: delivery.id,
