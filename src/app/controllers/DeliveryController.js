@@ -1,7 +1,8 @@
 /* eslint-disable yoda */
 import { isAfter, isBefore, parseISO, getHours } from 'date-fns';
 
-import Mail from '../../lib/Mail';
+import NewDeliveryMail from '../jobs/NewDeliveryMail';
+import Queue from '../../lib/Queue';
 
 import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
@@ -34,21 +35,36 @@ class DeliveryController {
           as: 'deliveryman',
         },
         {
+          model: Recipient,
+          as: 'recipient',
+        },
+        {
           model: File,
           as: 'signature',
         },
       ],
     });
 
-    await Mail.sendMail({
-      // to: `${delivery.deliveryman.name}`,
-      to: `${existingDeliveryman.name} <${existingDeliveryman.email}>`,
-      subject: 'Nova entrega',
-      // text: 'você tem uma nova entrega',
-      template: 'new_delivery',
-      context: {
-        deliveryman: existingDeliveryman.name,
-      },
+    // tenho que fazer uma query a mais, putz
+    const createdDelivery = await Delivery.findByPk(delivery.id, {
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+        },
+        {
+          model: Recipient,
+          as: 'recipient',
+        },
+        {
+          model: File,
+          as: 'signature',
+        },
+      ],
+    });
+
+    await Queue.add(NewDeliveryMail.key, {
+      delivery: createdDelivery,
     });
 
     return response.json(delivery);

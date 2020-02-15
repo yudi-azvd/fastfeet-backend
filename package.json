@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env nodemon src/server.js",
+    "queue": "nodemon src/queue.js",
     "dev:debug": "cross-env nodemon --inspect src/server.js",
     "pretest": "cross-env NODE_ENV=test yarn sequelize db:migrate",
     "test": "cross-env NODE_ENV=test jest",
