@@ -3,6 +3,7 @@ import { isAfter, isBefore, parseISO, getHours } from 'date-fns';
 import * as Yup from 'yup';
 
 import NewDeliveryMail from '../jobs/NewDeliveryMail';
+import CanceledDeliveryMail from '../jobs/CanceledDeliveryMail';
 import Queue from '../../lib/Queue';
 
 import Delivery from '../models/Delivery';
@@ -75,22 +76,31 @@ class DeliveryController {
   }
 
   async index(request, response) {
-    const deliveries = await Delivery.findAll({
-      include: [
-        {
-          model: Deliveryman,
-          as: 'deliveryman',
-        },
-        {
-          model: File,
-          as: 'signature',
-        },
-        {
-          model: Recipient,
-          as: 'recipient',
-        },
-      ],
-    });
+    let deliveries;
+    const deliverymanId = request.params.id;
+
+    if (deliverymanId) {
+      deliveries = await Delivery.findAll({
+        where: { canceledAt: null, endDate: null },
+      });
+    } else {
+      deliveries = await Delivery.findAll({
+        include: [
+          {
+            model: Deliveryman,
+            as: 'deliveryman',
+          },
+          {
+            model: File,
+            as: 'signature',
+          },
+          {
+            model: Recipient,
+            as: 'recipient',
+          },
+        ],
+      });
+    }
 
     return response.json(deliveries);
   }
@@ -150,9 +160,7 @@ class DeliveryController {
 
       delivery.startDate = startDate;
       await delivery.save();
-    }
-
-    if (endDate && delivery.startDate) {
+    } else if (endDate && delivery.startDate) {
       if (isAfter(delivery.startDate, parseISO(endDate))) {
         return response
           .status(400)
@@ -163,7 +171,8 @@ class DeliveryController {
       await delivery.save();
     } else {
       return response.status(400).json({
-        error: 'End date only makes sense when start date has been defined',
+        error:
+          'End date only makes sense when start date has been previously set',
       });
     }
 
@@ -171,7 +180,21 @@ class DeliveryController {
   }
 
   async delete(request, response) {
-    const existingDelivery = await Delivery.findByPk(request.params.id);
+    const existingDelivery = await Delivery.findByPk(request.params.id, {
+      attributes: ['product', 'id'],
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: ['name'],
+        },
+      ],
+    });
 
     if (!existingDelivery) {
       return response.status(404).json({ error: 'Delivery does not exist' });
@@ -183,7 +206,10 @@ class DeliveryController {
     if (!existingDelivery.canceledAt) {
       existingDelivery.canceledAt = new Date();
       await existingDelivery.save();
-      // enviar email
+      console.log('EMAIL DE CANCELAMENTO');
+      await Queue.add(CanceledDeliveryMail.key, {
+        delivery: existingDelivery,
+      });
     }
 
     return response.json(existingDelivery);
