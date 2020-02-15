@@ -38,6 +38,8 @@ router.get('/deliveries', DeliveryController.index);
 
 router.put('/deliveries/:id', DeliveryController.update);
 
+router.delete('/deliveries/:id', DeliveryController.delete);
+
 router.post('/files', upload.single('file'), FileController.store);
 
 export default router;
