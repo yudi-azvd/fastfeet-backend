@@ -3,7 +3,7 @@ import { isAfter, isBefore, parseISO, getHours } from 'date-fns';
 import * as Yup from 'yup';
 
 import NewDeliveryMail from '../jobs/NewDeliveryMail';
-import CanceledDeliveryMail from '../jobs/CanceledDeliveryMail';
+import CancelledDeliveryMail from '../jobs/CancelledDeliveryMail';
 import Queue from '../../lib/Queue';
 
 import Delivery from '../models/Delivery';
@@ -206,8 +206,7 @@ class DeliveryController {
     if (!existingDelivery.canceledAt) {
       existingDelivery.canceledAt = new Date();
       await existingDelivery.save();
-      console.log('EMAIL DE CANCELAMENTO');
-      await Queue.add(CanceledDeliveryMail.key, {
+      await Queue.add(CancelledDeliveryMail.key, {
         delivery: existingDelivery,
       });
     }

@@ -3,9 +3,9 @@ import pt from 'date-fns/locale/pt';
 
 import Mail from '../../lib/Mail';
 
-class CanceledDeliveryMail {
+class CancelledDeliveryMail {
   get key() {
-    return 'CanceledDeliveryMail';
+    return 'CancelledDeliveryMail';
   }
 
   // tarefa que será executada
@@ -33,4 +33,4 @@ class CanceledDeliveryMail {
   }
 }
 
-export default new CanceledDeliveryMail();
+export default new CancelledDeliveryMail();
