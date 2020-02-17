@@ -1,5 +1,15 @@
 /* eslint-disable yoda */
-import { isAfter, isBefore, parseISO, getHours } from 'date-fns';
+import { Op } from 'sequelize';
+import {
+  isAfter,
+  isBefore,
+  parseISO,
+  getHours,
+  setHours,
+  setMinutes,
+  setSeconds,
+  setMilliseconds,
+} from 'date-fns';
 import * as Yup from 'yup';
 
 import NewDeliveryMail from '../jobs/NewDeliveryMail';
@@ -28,7 +38,6 @@ class DeliveryController {
      * startDate, endDate e canceledAt
      */
     if (!(await schema.isValid(request.body))) {
-      console.log(schema);
       return response.status(400).json({ error: 'Validation fails' });
     }
 
@@ -77,28 +86,45 @@ class DeliveryController {
 
   async index(request, response) {
     let deliveries;
+    const { delivered = false } = request.query;
     const deliverymanId = request.params.id;
+    /**
+     * Além disso eu teria que remover os campos
+     * createdAt e updatedAt
+     */
+    const include = [
+      {
+        model: Deliveryman,
+        as: 'deliveryman',
+        attributes: ['id', 'name', 'email'],
+      },
+      {
+        model: File,
+        as: 'signature',
+      },
+      {
+        model: Recipient,
+        as: 'recipient',
+      },
+    ];
 
-    if (deliverymanId) {
+    if (deliverymanId && delivered) {
       deliveries = await Delivery.findAll({
-        where: { canceledAt: null, endDate: null },
+        where: { endDate: { [Op.ne]: null }, deliveryman_id: deliverymanId },
+        include,
+      });
+    } else if (deliverymanId) {
+      deliveries = await Delivery.findAll({
+        where: {
+          canceledAt: null,
+          endDate: null,
+          deliveryman_id: deliverymanId,
+        },
+        include,
       });
     } else {
       deliveries = await Delivery.findAll({
-        include: [
-          {
-            model: Deliveryman,
-            as: 'deliveryman',
-          },
-          {
-            model: File,
-            as: 'signature',
-          },
-          {
-            model: Recipient,
-            as: 'recipient',
-          },
-        ],
+        include,
       });
     }
 
@@ -106,21 +132,6 @@ class DeliveryController {
   }
 
   async update(request, response) {
-    /**
-     * endDate só faz sentido se startDate for definido
-     * Além disso, endDate não deveria ser informado
-     * na mesma requisição que startDate, mas não tô
-     * considerando isso por agora.
-     *
-     * Na vdd, agora to considerando que o frontend só
-     * vai apertar um botão para enviar solicitar a retirada
-     * e outr botão para confirmar entrega finalizada, e não
-     * um formulário.
-     *
-     * Mas e se a entrega já estiver cancelada? O que fazer?
-     * - passar reto?
-     * - passar um erro?
-     */
     const schema = Yup.object().shape({
       product: Yup.string(),
       endDate: Yup.date(),
@@ -135,12 +146,71 @@ class DeliveryController {
     const { id } = request.params;
     const { startDate, endDate } = request.body;
 
-    const delivery = await Delivery.findByPk(id);
+    const delivery = await Delivery.findByPk(id, {
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+        },
+      ],
+    });
 
     // if (delivery.canceledAt) ???
 
     if (!delivery) {
       return response.status(400).json({ error: 'Delivery not found' });
+    }
+
+    const FIRST_HOUR_OF_DAY = 8;
+    const LAST_HOUR_OF_DAY = 18;
+
+    if (request.path.endsWith('/withdrawal')) {
+      const deliverymanId = delivery.deliveryman.id;
+      const currentDate = new Date();
+      const currentDateInitialHours = setMilliseconds(
+        setSeconds(
+          setMinutes(setHours(currentDate, FIRST_HOUR_OF_DAY, 0), 0),
+          0
+        ),
+        0
+      );
+
+      if (delivery.startDate) {
+        return response
+          .status(403)
+          .json({ error: 'Delivery cannot be withdrawn again' });
+      }
+
+      const deliveriesFromToday = await Delivery.findAll({
+        where: {
+          deliveryman_id: deliverymanId,
+          startDate: { [Op.between]: [currentDateInitialHours, currentDate] },
+        },
+        limit: 6,
+      });
+
+      if (deliveriesFromToday.length >= 5) {
+        return response
+          .status(403)
+          .json({ error: 'Deliveryman can only make 5 withdrawals per day' });
+      }
+
+      const hour = getHours(currentDate);
+
+      if (!(FIRST_HOUR_OF_DAY <= hour && hour <= LAST_HOUR_OF_DAY)) {
+        return response
+          .status(400)
+          .json({ error: 'Withdrawal must be done between 8h and 18h' });
+      }
+
+      // delivery.startDate = currentDateInitialHours;
+      delivery.startDate = currentDate;
+      await delivery.save();
+      return response.json({ withdrawal: true });
+    }
+
+    if (request.path.endsWith('/delivered')) {
+      return response.json({ delivered: true });
     }
 
     if (startDate) {
@@ -149,17 +219,6 @@ class DeliveryController {
           error: 'Start date should not be before delivery creation date',
         });
       }
-
-      const hour = getHours(parseISO(startDate));
-
-      if (!(8 <= hour && hour <= 18)) {
-        return response
-          .status(400)
-          .json({ error: 'Withdrawal must be done between 8h and 18h' });
-      }
-
-      delivery.startDate = startDate;
-      await delivery.save();
     } else if (endDate && delivery.startDate) {
       if (isAfter(delivery.startDate, parseISO(endDate))) {
         return response

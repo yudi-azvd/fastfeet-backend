@@ -40,6 +40,10 @@ router.get('/deliveries', DeliveryController.index);
 
 router.put('/deliveries/:id', DeliveryController.update);
 
+router.put('/deliveries/:id/withdrawal', DeliveryController.update);
+
+router.put('/deliveries/:id/delivered', DeliveryController.update);
+
 router.delete('/deliveries/:id', DeliveryController.delete);
 
 router.post('/files', upload.single('file'), FileController.store);
