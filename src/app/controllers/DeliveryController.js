@@ -155,8 +155,6 @@ class DeliveryController {
       ],
     });
 
-    // if (delivery.canceledAt) ???
-
     if (!delivery) {
       return response.status(400).json({ error: 'Delivery not found' });
     }
@@ -210,6 +208,7 @@ class DeliveryController {
     }
 
     if (request.path.endsWith('/delivered')) {
+      delivery.endDate = new Date();
       return response.json({ delivered: true });
     }
 
@@ -219,21 +218,26 @@ class DeliveryController {
           error: 'Start date should not be before delivery creation date',
         });
       }
-    } else if (endDate && delivery.startDate) {
-      if (isAfter(delivery.startDate, parseISO(endDate))) {
-        return response
-          .status(400)
-          .json({ error: 'Start date must be before end date' });
-      }
-
-      delivery.endDate = endDate;
-      await delivery.save();
-    } else {
-      return response.status(400).json({
-        error:
-          'End date only makes sense when start date has been previously set',
-      });
     }
+
+    if (endDate) {
+      if (endDate && delivery.startDate) {
+        if (isAfter(delivery.startDate, parseISO(endDate))) {
+          return response
+            .status(400)
+            .json({ error: 'Start date must be before end date' });
+        }
+      } else {
+        return response.status(400).json({
+          error:
+            'End date only makes sense when start date has been previously set',
+        });
+      }
+    }
+
+    // if (canceledAt) ???
+
+    await delivery.update(request.body);
 
     return response.json(delivery);
   }
