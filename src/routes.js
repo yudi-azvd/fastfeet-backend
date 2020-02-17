@@ -42,6 +42,7 @@ router.put('/deliveries/:id', DeliveryController.update);
 
 router.put('/deliveries/:id/withdrawal', DeliveryController.update);
 
+// tem que aceitar um arquivo aqui
 router.put('/deliveries/:id/delivered', DeliveryController.update);
 
 router.delete('/deliveries/:id', DeliveryController.delete);
