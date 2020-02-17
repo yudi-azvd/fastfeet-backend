@@ -31,6 +31,11 @@ class DeliveryProblemController {
   async index(request, response) {
     const deliveryId = request.params.id;
 
+    if (!deliveryId) {
+      const deliveryProblems = await DeliveryProblem.findAll();
+      return response.json(deliveryProblems);
+    }
+
     const existingDelivery = await Delivery.findByPk(deliveryId);
 
     if (!existingDelivery) {

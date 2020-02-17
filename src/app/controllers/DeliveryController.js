@@ -17,6 +17,7 @@ import CancelledDeliveryMail from '../jobs/CancelledDeliveryMail';
 import Queue from '../../lib/Queue';
 
 import Delivery from '../models/Delivery';
+import DeliveryProblem from '../models/DeliveryProblem';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
 import File from '../models/File';
@@ -243,6 +244,53 @@ class DeliveryController {
   }
 
   async delete(request, response) {
+    if (request.path.endsWith('/cancel-delivery')) {
+      const deliveryProblemId = request.params.id;
+
+      const deliveryProblem = await DeliveryProblem.findByPk(
+        deliveryProblemId,
+        {
+          include: [
+            {
+              model: Delivery,
+              as: 'delivery',
+              include: [
+                {
+                  model: Deliveryman,
+                  as: 'deliveryman',
+                },
+                {
+                  model: Recipient,
+                  as: 'recipient',
+                },
+              ],
+            },
+          ],
+        }
+      );
+
+      /**
+       * Só deve ser cancelada uma ÚNICA vez
+       */
+      if (!deliveryProblem) {
+        return response
+          .status(404)
+          .json({ error: 'Delivery problem not found' });
+      }
+
+      if (!deliveryProblem.delivery.canceledAt) {
+        deliveryProblem.delivery.canceledAt = new Date();
+
+        await deliveryProblem.delivery.save();
+        await Queue.add(CancelledDeliveryMail.key, {
+          delivery: deliveryProblem.delivery,
+        });
+      }
+
+      // e se o front end quiser mostrar o horário de cancelamento?
+      return response.json({ canceled: true });
+    }
+
     const existingDelivery = await Delivery.findByPk(request.params.id, {
       attributes: ['product', 'id'],
       include: [
@@ -263,18 +311,9 @@ class DeliveryController {
       return response.status(404).json({ error: 'Delivery does not exist' });
     }
 
-    /**
-     * Só deve ser cancelada uma ÚNICA vez
-     */
-    if (!existingDelivery.canceledAt) {
-      existingDelivery.canceledAt = new Date();
-      await existingDelivery.save();
-      await Queue.add(CancelledDeliveryMail.key, {
-        delivery: existingDelivery,
-      });
-    }
+    await Delivery.destroy({ where: { id: existingDelivery.id } });
 
-    return response.json(existingDelivery);
+    return response.json({ deleted: true });
   }
 }
 
