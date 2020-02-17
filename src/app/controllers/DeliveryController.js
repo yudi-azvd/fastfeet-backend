@@ -210,6 +210,9 @@ class DeliveryController {
 
     if (request.path.endsWith('/delivered')) {
       delivery.endDate = new Date();
+
+      // REDIRECIONAR PARA /files
+      // return response.redirect(307, '/files');
       return response.json({ delivered: true });
     }
 
