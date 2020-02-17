@@ -10,6 +10,7 @@ import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
 import DeliverymanController from './app/controllers/DeliverymanController';
 import DeliveryController from './app/controllers/DeliveryController';
+import DeliveryProblemController from './app/controllers/DeliveryProblemController';
 
 const router = new Router();
 const upload = new multer(multerConfig);
@@ -42,10 +43,14 @@ router.put('/deliveries/:id', DeliveryController.update);
 
 router.put('/deliveries/:id/withdrawal', DeliveryController.update);
 
-// tem que aceitar um arquivo aqui
+// TEM QUE ACEITAR UM ARQUIVO AQUI
 router.put('/deliveries/:id/delivered', DeliveryController.update);
 
 router.delete('/deliveries/:id', DeliveryController.delete);
+
+router.post('/delivery/:id/problems', DeliveryProblemController.store);
+
+router.get('/delivery/:id/problems', DeliveryProblemController.index);
 
 router.post('/files', upload.single('file'), FileController.store);
 
