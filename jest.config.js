@@ -35,7 +35,12 @@ module.exports = {
   coverageReporters: ['text', 'lcov'],
 
   // An object that configures minimum threshold enforcement for coverage results
-  // coverageThreshold: undefined,
+  // coverageThreshold: {
+  //   global: {
+  //     branches: 70,
+  //     statements: 70,
+  //   },
+  // },
 
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,

@@ -209,9 +209,9 @@ class DeliveryController {
     }
 
     if (request.path.endsWith('/delivered')) {
-      delivery.endDate = new Date();
-
       if (!delivery.endDate) {
+        delivery.endDate = new Date();
+        await delivery.save();
         return response.redirect(307, '/files');
       }
 

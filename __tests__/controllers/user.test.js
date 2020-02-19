@@ -6,8 +6,6 @@ import truncate from '../util/truncate';
 
 import factory from '../factories';
 
-let token;
-
 describe('User', () => {
   beforeEach(async () => {
     await truncate();
@@ -76,6 +74,20 @@ describe('User', () => {
    * UPDATE method
    */
   describe('when authenticated', () => {
+    it('must list all users', async () => {
+      await factory.create('User');
+      await factory.create('User');
+      const user = await factory.create('User');
+
+      const token = user.generateToken();
+
+      const response = await request(app)
+        .get('/users')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.body).toHaveLength(3);
+    });
+
     it('must provide password, old password and confirm password', async () => {
       const user = await factory.create('User');
 
@@ -88,7 +100,7 @@ describe('User', () => {
 
       expect(authResponse.body).toHaveProperty('token');
 
-      token = authResponse.body.token;
+      const { token } = authResponse.body;
 
       const updateResponse = await request(app)
         .put('/users')
@@ -116,7 +128,7 @@ describe('User', () => {
 
       expect(authResponse.body).toHaveProperty('token');
 
-      token = authResponse.body.token;
+      const { token } = authResponse.body;
 
       const updateResponse = await request(app)
         .put('/users')
@@ -142,7 +154,7 @@ describe('User', () => {
         });
       expect(authResponse.body).toHaveProperty('token');
 
-      token = authResponse.body.token;
+      const { token } = authResponse.body;
 
       const updateResponse = await request(app)
         .put('/users')
@@ -166,7 +178,7 @@ describe('User', () => {
           password: user.password,
         });
 
-      token = authResponse.body.token;
+      const { token } = authResponse.body;
 
       const updateResponse = await request(app)
         .put('/users')
@@ -191,7 +203,7 @@ describe('User', () => {
 
       expect(authResponse.body).toHaveProperty('token');
 
-      token = authResponse.body.token;
+      const { token } = authResponse.body;
 
       const updateResponse = await request(app)
         .put('/users')
