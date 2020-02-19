@@ -41,10 +41,10 @@ router.get('/deliveries', DeliveryController.index);
 
 router.put('/deliveries/:id', DeliveryController.update);
 
-router.put('/deliveries/:id/withdrawal', DeliveryController.update);
+router.post('/deliveries/:id/withdrawal', DeliveryController.update);
 
 // TEM QUE ACEITAR UM ARQUIVO AQUI
-router.put('/deliveries/:id/delivered', DeliveryController.update);
+router.post('/deliveries/:id/delivered', DeliveryController.update);
 
 router.delete('/deliveries/:id', DeliveryController.delete);
 
