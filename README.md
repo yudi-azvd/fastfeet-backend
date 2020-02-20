@@ -11,7 +11,7 @@ npm install
 
 Outros programas:
 
-* [Insomnia](https://insomnia.rest/) clienten de requisições HTTP para testar as requisições para o backend.
+* [Insomnia](https://insomnia.rest/) clienten de requisições HTTP para testar o backend.
 * [Postbird](https://www.electronjs.org/apps/postbird) (ou qualquer outro cliente
 Postgres) para visualizar o banco de dados.
 * [Docker](https://www.docker.com/) para montar a imagem do banco de dados.
