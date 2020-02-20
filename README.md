@@ -11,7 +11,7 @@ npm install
 
 Outros programas:
 
-* [Insomnia](https://insomnia.rest/) para testar as requisições para o backend.
+* [Insomnia](https://insomnia.rest/) clienten de requisições HTTP para testar as requisições para o backend.
 * [Postbird](https://www.electronjs.org/apps/postbird) (ou qualquer outro cliente
 Postgres) para visualizar o banco de dados.
 * [Docker](https://www.docker.com/) para montar a imagem do banco de dados.
@@ -40,4 +40,7 @@ Para iniciar o backend
 ```
 yarn dev
 ```
+
+### Workspace do Insomnia
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=Fasfeet&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fyudi-azvd%2Ffastfeet-backend%2Fmaster%2FInsomnia-fastfeet.json)
 
