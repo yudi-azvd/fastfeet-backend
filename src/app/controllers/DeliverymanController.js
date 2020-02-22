@@ -54,16 +54,16 @@ class DeliverymanController {
 
     const deliveryman = await Deliveryman.findByPk(request.params.id);
 
+    if (!deliveryman) {
+      return response.status(404).json({ error: 'Deliveryman not found' });
+    }
+
     if (email && email !== deliveryman.email) {
       const emailAlreadyUsed = Deliveryman.findOne({ where: { email } });
 
       if (emailAlreadyUsed) {
         return response.status(401).json({ error: 'Email already being used' });
       }
-    }
-
-    if (!deliveryman) {
-      return response.status(404).json({ error: 'Deliveryman not found' });
     }
 
     const { id, name } = await deliveryman.update(request.body);
