@@ -6,7 +6,9 @@ class DeliverymanController {
   async store(request, response) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      email: Yup.string().required(),
+      email: Yup.string()
+        .email()
+        .required(),
     });
 
     if (!(await schema.isValid(request.body))) {
@@ -27,7 +29,12 @@ class DeliverymanController {
   }
 
   async index(request, response) {
-    const deliverymen = await Deliveryman.findAll();
+    const DELIVERYMEN_PER_PAGE = 20;
+    const { page = 1 } = request.query;
+
+    const deliverymen = await Deliveryman.findAll({
+      offset: (page - 1) * DELIVERYMEN_PER_PAGE,
+    });
 
     return response.json(deliverymen);
   }
