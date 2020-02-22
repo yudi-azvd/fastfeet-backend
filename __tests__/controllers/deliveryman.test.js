@@ -65,4 +65,64 @@ describe('Deliveryman', () => {
 
     expect(response.body).toHaveLength(20);
   });
+
+  it('should not be able to update non existing deliveryman', async () => {
+    await factory.create('Deliveryman');
+
+    const response = await request(app)
+      .put(`/deliverymen/2`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Yudi', email: 'yudi@yudiyudi.com' });
+
+    expect(response.body.error).toBe('Deliveryman not found');
+  });
+
+  it('should not be able to update deliveryman with invalid email', async () => {
+    const deliveryman = await factory.create('Deliveryman');
+
+    const response = await request(app)
+      .put(`/deliverymen/${deliveryman.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Yudi', email: 'yudicom' });
+
+    expect(response.body.error).toBe('Validation fails');
+  });
+
+  it('should not be able to change their email to an already existing email', async () => {
+    await factory.create('Deliveryman', {
+      email: 'existing@email.com',
+    });
+
+    const deliveryman = await factory.create('Deliveryman');
+
+    const response = await request(app)
+      .put(`/deliverymen/${deliveryman.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ email: 'existing@email.com' });
+
+    expect(response.body.error).toBe('Email already being used');
+  });
+
+  it('should be able to be updated', async () => {
+    const deliveryman = await factory.create('Deliveryman', {
+      email: 'first@email.com',
+    });
+
+    const response = await request(app)
+      .put(`/deliverymen/${deliveryman.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ email: 'second@email.com', name: 'Another name' });
+
+    expect(response.body).toHaveProperty('id');
+  });
+
+  it('should be able to be deleted', async () => {
+    const deliveryman = await factory.create('Deliveryman');
+
+    const response = await request(app)
+      .delete(`/deliverymen/${deliveryman.id}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.body).toHaveProperty('deleted');
+  });
 });

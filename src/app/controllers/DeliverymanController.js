@@ -49,7 +49,7 @@ class DeliverymanController {
     });
 
     if (!(await schema.isValid(request.body))) {
-      return response.status(400).json({ error: 'Validation fails.' });
+      return response.status(400).json({ error: 'Validation fails' });
     }
 
     const deliveryman = await Deliveryman.findByPk(request.params.id);
@@ -59,7 +59,7 @@ class DeliverymanController {
     }
 
     if (email && email !== deliveryman.email) {
-      const emailAlreadyUsed = Deliveryman.findOne({ where: { email } });
+      const emailAlreadyUsed = await Deliveryman.findOne({ where: { email } });
 
       if (emailAlreadyUsed) {
         return response.status(401).json({ error: 'Email already being used' });
@@ -79,7 +79,7 @@ class DeliverymanController {
      */
     await Deliveryman.destroy({ where: { id } });
 
-    return response.json({ delete: true });
+    return response.json({ deleted: true });
   }
 }
 
