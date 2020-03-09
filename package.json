@@ -15,6 +15,7 @@
     "@sentry/node": "5.12.2",
     "bcryptjs": "^2.4.3",
     "bee-queue": "^1.2.3",
+    "cors": "^2.8.5",
     "date-fns": "^2.9.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -47,7 +48,8 @@
     "prettier": "^1.19.1",
     "sequelize-cli": "^5.5.1",
     "sucrase": "^3.12.1",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "timekeeper": "^2.2.0"
   },
   "repository": {
     "type": "git",
