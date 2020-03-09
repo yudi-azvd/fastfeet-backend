@@ -205,7 +205,7 @@ class DeliveryController {
       // delivery.startDate = currentDateInitialHours;
       delivery.startDate = currentDate;
       await delivery.save();
-      return response.json({ withdrawal: true });
+      return response.json({ withdrawn: true });
     }
 
     if (request.path.endsWith('/delivered')) {
