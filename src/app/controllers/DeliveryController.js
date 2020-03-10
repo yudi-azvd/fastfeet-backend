@@ -97,7 +97,7 @@ class DeliveryController {
       {
         model: Deliveryman,
         as: 'deliveryman',
-        attributes: ['id', 'name', 'email'],
+        attributes: ['id', 'name', 'email', 'avatar'],
       },
       {
         model: File,
