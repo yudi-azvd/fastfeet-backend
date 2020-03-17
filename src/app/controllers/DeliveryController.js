@@ -87,7 +87,7 @@ class DeliveryController {
 
   async index(request, response) {
     let deliveries;
-    const { delivered = false } = request.query;
+    const { delivered = false, q = '' } = request.query;
     const deliverymanId = request.params.id;
     /**
      * Além disso eu teria que remover os campos
@@ -109,7 +109,14 @@ class DeliveryController {
       },
     ];
 
-    if (deliverymanId && delivered) {
+    if (q) {
+      deliveries = await Delivery.findAll({
+        where: {
+          product: { [Op.iLike]: `%${q}%` },
+        },
+        include,
+      });
+    } else if (deliverymanId && delivered) {
       deliveries = await Delivery.findAll({
         where: { endDate: { [Op.ne]: null }, deliveryman_id: deliverymanId },
         include,
