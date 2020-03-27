@@ -10,6 +10,7 @@ import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
 import DeliverymanController from './app/controllers/DeliverymanController';
 import DeliveryController from './app/controllers/DeliveryController';
+import RecipientController from './app/controllers/RecipientController';
 import DeliveryProblemController from './app/controllers/DeliveryProblemController';
 
 const router = new Router();
@@ -47,6 +48,8 @@ router.post('/deliveries/:id/withdrawal', DeliveryController.update);
 router.post('/deliveries/:id/delivered', DeliveryController.update);
 
 router.delete('/deliveries/:id', DeliveryController.delete);
+
+router.get('/recipients', RecipientController.index);
 
 router.post('/delivery/:id/problems', DeliveryProblemController.store);
 
