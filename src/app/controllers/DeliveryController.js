@@ -144,15 +144,29 @@ class DeliveryController {
       product: Yup.string(),
       endDate: Yup.date(),
       startDate: Yup.date(),
+      recipient_id: Yup.number(),
+      deliveryman_id: Yup.number(),
       // Eu teria que não deixar que canceledAt fosse enviado
     });
+
+    console.log();
+    console.log();
+    console.log(request.body);
+    console.log();
+    console.log();
 
     if (!(await schema.isValid(request.body))) {
       return response.status(400).json({ error: 'Validation fails' });
     }
 
     const { id } = request.params;
-    const { startDate, endDate } = request.body;
+    const {
+      startDate,
+      endDate,
+      product,
+      deliveryman_id,
+      recipient_id,
+    } = request.body;
 
     const delivery = await Delivery.findByPk(id, {
       include: [
@@ -165,6 +179,15 @@ class DeliveryController {
 
     if (!delivery) {
       return response.status(400).json({ error: 'Delivery not found' });
+    }
+
+    if (deliveryman_id && delivery.deliveryman.id !== deliveryman_id) {
+      const existingDeliveryman = await Deliveryman.findByPk(deliveryman_id);
+
+      if (existingDeliveryman) {
+        delivery.deliveryman_id = existingDeliveryman.id;
+        await delivery.save();
+      }
     }
 
     const FIRST_HOUR_OF_DAY = 8;
@@ -227,28 +250,28 @@ class DeliveryController {
         .json({ error: 'Delivery cannot be delivered again' });
     }
 
-    if (startDate) {
-      if (isBefore(parseISO(startDate), delivery.createdAt)) {
-        return response.status(400).json({
-          error: 'Start date should not be before delivery creation date',
-        });
-      }
-    }
+    // if (startDate) {
+    //   if (isBefore(parseISO(startDate), delivery.createdAt)) {
+    //     return response.status(400).json({
+    //       error: 'Start date should not be before delivery creation date',
+    //     });
+    //   }
+    // }
 
-    if (endDate) {
-      if (endDate && delivery.startDate) {
-        if (isAfter(delivery.startDate, parseISO(endDate))) {
-          return response
-            .status(400)
-            .json({ error: 'Start date must be before end date' });
-        }
-      } else {
-        return response.status(400).json({
-          error:
-            'End date only makes sense when start date has been previously set',
-        });
-      }
-    }
+    // if (endDate) {
+    //   if (endDate && delivery.startDate) {
+    //     if (isAfter(delivery.startDate, parseISO(endDate))) {
+    //       return response
+    //         .status(400)
+    //         .json({ error: 'Start date must be before end date' });
+    //     }
+    //   } else {
+    //     return response.status(400).json({
+    //       error:
+    //         'End date only makes sense when start date has been previously set',
+    //     });
+    //   }
+    // }
 
     // if (canceledAt) ???
 
