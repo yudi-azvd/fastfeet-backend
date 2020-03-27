@@ -87,7 +87,7 @@ class DeliveryController {
 
   async index(request, response) {
     let deliveries;
-    const { delivered = false, q = '' } = request.query;
+    const { delivered = false, q = '', id = 0 } = request.query;
     const deliverymanId = request.params.id;
     /**
      * Além disso eu teria que remover os campos
@@ -109,6 +109,15 @@ class DeliveryController {
       },
     ];
 
+    if (id) {
+      const delivery = await Delivery.findByPk(id);
+
+      if (delivery) {
+        return response.json(delivery);
+      }
+
+      return response.status(404).json({ error: 'Delivery not found' });
+    }
     if (q) {
       deliveries = await Delivery.findAll({
         where: {
