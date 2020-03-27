@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import * as Yup from 'yup';
 
 import Deliveryman from '../models/Deliveryman';
@@ -30,7 +31,17 @@ class DeliverymanController {
 
   async index(request, response) {
     const DELIVERYMEN_PER_PAGE = 20;
-    const { page = 1 } = request.query;
+    const { page = 1, q = '' } = request.query;
+
+    if (q) {
+      const deliverymen = await Deliveryman.findAll({
+        where: {
+          name: { [Op.iLike]: `%${q}%` },
+        },
+      });
+
+      return response.json(deliverymen);
+    }
 
     const deliverymen = await Deliveryman.findAll({
       offset: (page - 1) * DELIVERYMEN_PER_PAGE,
