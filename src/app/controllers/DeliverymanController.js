@@ -31,7 +31,7 @@ class DeliverymanController {
 
   async index(request, response) {
     const DELIVERYMEN_PER_PAGE = 20;
-    const { page = 1, q = '' } = request.query;
+    const { page = 1, q = '', id: deliverymanId } = request.query;
 
     if (q) {
       const deliverymen = await Deliveryman.findAll({
@@ -41,6 +41,18 @@ class DeliverymanController {
       });
 
       return response.json(deliverymen);
+    }
+
+    if (parseInt(deliverymanId, 10)) {
+      const deliveryman = await Deliveryman.findByPk(
+        parseInt(deliverymanId, 10)
+      );
+
+      if (!deliveryman) {
+        return response.status(404).json({ error: 'Deliveryman not found' });
+      }
+
+      return response.json(deliveryman);
     }
 
     const deliverymen = await Deliveryman.findAll({
