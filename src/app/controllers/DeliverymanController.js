@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import * as Yup from 'yup';
 
 import Deliveryman from '../models/Deliveryman';
+import File from '../models/File';
 
 class DeliverymanController {
   async store(request, response) {
@@ -32,6 +33,13 @@ class DeliverymanController {
   async index(request, response) {
     const DELIVERYMEN_PER_PAGE = 20;
     const { page = 1, q = '', id: deliverymanId } = request.query;
+    const include = [
+      {
+        model: File,
+        as: 'avatar',
+        attributes: ['id', 'url', 'name', 'path'],
+      },
+    ];
 
     if (q) {
       const deliverymen = await Deliveryman.findAll({
@@ -43,10 +51,11 @@ class DeliverymanController {
       return response.json(deliverymen);
     }
 
-    if (parseInt(deliverymanId, 10)) {
-      const deliveryman = await Deliveryman.findByPk(
-        parseInt(deliverymanId, 10)
-      );
+    const id = parseInt(deliverymanId, 10);
+    if (id) {
+      const deliveryman = await Deliveryman.findByPk(id, {
+        include,
+      });
 
       if (!deliveryman) {
         return response.status(404).json({ error: 'Deliveryman not found' });

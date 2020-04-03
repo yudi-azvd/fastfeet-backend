@@ -1,9 +1,6 @@
 /* eslint-disable yoda */
 import { Op } from 'sequelize';
 import {
-  isAfter,
-  isBefore,
-  parseISO,
   getHours,
   setHours,
   setMinutes,
@@ -109,8 +106,11 @@ class DeliveryController {
       },
     ];
 
-    if (id) {
-      const delivery = await Delivery.findByPk(id);
+    if (id && id != 'undefined') {
+      console.log();
+      console.log(id);
+      console.log();
+      const delivery = await Delivery.findByPk(id, { include });
 
       if (delivery) {
         return response.json(delivery);
@@ -157,12 +157,6 @@ class DeliveryController {
       deliveryman_id: Yup.number(),
       // Eu teria que não deixar que canceledAt fosse enviado
     });
-
-    console.log();
-    console.log();
-    console.log(request.body);
-    console.log();
-    console.log();
 
     if (!(await schema.isValid(request.body))) {
       return response.status(400).json({ error: 'Validation fails' });
