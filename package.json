@@ -9,7 +9,9 @@
     "dev:debug": "cross-env nodemon --inspect src/server.js",
     "pretest": "cross-env NODE_ENV=test yarn sequelize db:migrate",
     "test": "cross-env NODE_ENV=test jest",
-    "posttest": "cross-env NODE_ENV=test yarn sequelize db:migrate:undo:all"
+    "posttest": "cross-env NODE_ENV=test yarn sequelize db:migrate:undo:all",
+    "db:erase": "yarn sequelize db:migrate:undo:all",
+    "db:populate": "yarn sequelize db:migrate && yarn sequelize db:seed:all"
   },
   "dependencies": {
     "@sentry/node": "5.12.2",
