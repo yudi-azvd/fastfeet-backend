@@ -11,21 +11,21 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: 'recipients', key: 'id' },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-        allowNull: true, // mudar dps
+        onDelete: 'CASCADE',
+        allowNull: false, // mudar dps
       },
       deliveryman_id: {
         type: Sequelize.INTEGER,
         references: { model: 'deliverymans', key: 'id' },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-        allowNull: true, // mudar dps
+        onDelete: 'CASCADE',
+        allowNull: false, // mudar dps
       },
       signature_id: {
         type: Sequelize.INTEGER,
         references: { model: 'files', key: 'id' },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
         allowNull: true,
       },
       product: {
