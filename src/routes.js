@@ -51,6 +51,8 @@ router.delete('/deliveries/:id', DeliveryController.delete);
 
 router.get('/recipients', RecipientController.index);
 
+router.delete('/recipients/:id', RecipientController.delete);
+
 router.post('/delivery/:id/problems', DeliveryProblemController.store);
 
 router.get('/delivery/:id/problems', DeliveryProblemController.index);
