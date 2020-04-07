@@ -19,6 +19,14 @@ class RecipientController {
 
     return response.json(recipients);
   }
+
+  async delete(request, response) {
+    const { id } = request.params;
+
+    await Recipient.destroy({ where: { id } });
+
+    return response.json({ deleted: true });
+  }
 }
 
 export default new RecipientController();
