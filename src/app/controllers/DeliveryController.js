@@ -95,6 +95,13 @@ class DeliveryController {
         model: Deliveryman,
         as: 'deliveryman',
         attributes: ['id', 'name', 'email', 'avatar_id'],
+        include: [
+          {
+            model: File,
+            as: 'avatar',
+            attributes: ['id', 'name', 'path', 'url'],
+          },
+        ],
       },
       {
         model: File,
@@ -107,9 +114,6 @@ class DeliveryController {
     ];
 
     if (id && id != 'undefined') {
-      console.log();
-      console.log(id);
-      console.log();
       const delivery = await Delivery.findByPk(id, { include });
 
       if (delivery) {

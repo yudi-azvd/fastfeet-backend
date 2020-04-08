@@ -43,6 +43,7 @@ class DeliverymanController {
 
     if (q) {
       const deliverymen = await Deliveryman.findAll({
+        include,
         where: {
           name: { [Op.iLike]: `%${q}%` },
         },
@@ -67,6 +68,7 @@ class DeliverymanController {
     const deliverymen = await Deliveryman.findAll({
       offset: (page - 1) * DELIVERYMEN_PER_PAGE,
       limit: DELIVERYMEN_PER_PAGE,
+      include,
     });
 
     return response.json(deliverymen);
