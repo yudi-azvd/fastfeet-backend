@@ -4,7 +4,7 @@ Desafio final desenvolvido para o bootcamp da Rockeseat.
 ### Setup
 Clone o repositório com `git clone` no seu terminal ou clicando no botão verde dessa página. Depois de baixado, abra o diretório no terminal e execute:
 ```
-yarn install
+yarn
 # ou
 npm install
 ```
