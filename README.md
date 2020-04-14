@@ -33,7 +33,7 @@ Para iniciar o backend
 
 ```sh
 yarn dev
-# em outro janela de terminal
+# em outra janela de terminal
 yarn queue
 ```
 
