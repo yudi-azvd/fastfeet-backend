@@ -22,23 +22,19 @@ de acordo com as suas informações.
 
 
 #### Preenchendo o Banco de Dados
-Para criar as tabelas do banco de dados, execute as migrações com
+Para criar as tabelas do banco de dados e preenchê-las, execute
 
-```
-yarn sequelize db:migrate
-```
-
-e depois para preenchê-lo
-
-```
-yarn sequelize db:seed:all
+```sh
+yarn db:populate
 ```
 
 ### Executar
 Para iniciar o backend
 
-```
+```sh
 yarn dev
+# em outro janela de terminal
+yarn queue
 ```
 
 ### Workspace do Insomnia
