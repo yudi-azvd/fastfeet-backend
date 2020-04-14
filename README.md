@@ -40,3 +40,6 @@ yarn queue
 ### Workspace do Insomnia
 [![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=Fasfeet&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fyudi-azvd%2Ffastfeet-backend%2Fmaster%2FInsomnia-fastfeet.json)
 
+
+### Frontend
+Dê uma olhada [aqui](https://github.com/yudi-azvd/fastfeet-frontend) para configurar o backend da aplicação.
